@@ -69,7 +69,7 @@
             margin-right: auto;
             top: 20px;
         }
-
+        
     </style>
 </head>
 <body>
@@ -85,6 +85,15 @@
         require('inc/identifiants.php');
         require('inc/connect.php');
         $conn = connection(SERVERNAME,DATABASE,USERNAME,PASSWORD);
+
+        session_start();
+        $_SESSION['password'];
+        if($_POST['pass']!=NULL){
+            array_push($_SESSION['password'],$_POST['pass']);
+        }
+        if($_GET['reset']== 'oui'){
+            $_SESSION['password']=[];
+        }
 
         //Recup bouton cliqué
         $choix = $_GET['boutons'];
@@ -137,20 +146,23 @@
     <?php
 
         function affiche_photo($resultat){
-            $password = 0;
+            $password='oui';
             echo '<div id="zonePhotos">';
             foreach($resultat as $result){
-                if($result['passwd']!=null){
-                    captivUser();
+                if($result['passwd']!=null AND !in_array($result['passwd'],$_SESSION['password'])){
+                    if($password=='oui'){
+                        echo '<form method="POST"><label>Mot de passe nécessaire pour accéder à la catégorie '.$result['categorie'].'</label><input type="text" placeholder="mdp" name="pass"><input type="submit"></form>';
+                        $password='non';
+                    }
                 }
-                echo '<img src="'.$result['chemin'].'/'.$result['nom_photo'].'" alt="La photo" width="23%" height="auto">';
+                if(in_array($result['passwd'],$_SESSION['password'])){
+                    echo '<img src="'.$result['chemin'].'/'.$result['nom_photo'].'" alt="La photo" width="23%" height="auto">';
+                    $password='oui';
+                }
             }
             echo '</div>';
         }
-
-        function captivUser(){
-
-        }
+        
 
     //Gestion multiple
         $jointure = 0;
@@ -185,15 +197,18 @@
             $requete .= " date = '".$rechercheDate."'";
             $jointure = 1;
         }
-        if($jointure=1){
+        if($jointure===1){
             $jointure=0;
             $resultatRq = $conn->prepare($requete);
             $resultatRq->bindParam(':cat',$categorie,PDO::PARAM_STR);
             $resultatRq->execute();
             affiche_photo($resultatRq);
         }
-    ?>
 
+    ?>
+    <form action="">
+        <input type="submit" name="reset" value="oui">
+    </form>
     <script>
         document.addEventListener('click', function(e){
             if(e.target.nodeName =='IMG'){
