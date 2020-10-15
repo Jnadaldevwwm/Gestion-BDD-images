@@ -62,6 +62,10 @@
             flex-flow: row wrap;
             justify-content: center;
         }
+        #zonePhotos form{
+            width:100%;
+            text-align:center;
+        }
         #choixTable{
             margin-bottom:25px;
         }
@@ -90,9 +94,98 @@
             background-color: rgba(240, 248, 255, 0.475);
             margin: 5px;
         }
+
+
+        @import url(//fonts.googleapis.com/css?family=Vibur);
+
+.logo {
+  text-align: center;
+  width: 65%;
+  height: 250px;
+  margin: auto;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+   user-select: none;
+}
+
+.logo b{
+  font: 400 19vh "Vibur";
+  color: #fee;
+  text-shadow: 0 -40px 100px, 0 0 2px, 0 0 1em #0e7afe, 0 0 0.5em #4470ff, 0 0 0.1em #4479ff, 0 10px 3px #000;
+}
+.logo b span{
+  animation: blink linear infinite 2s;
+}
+.logo b span:nth-of-type(2){
+  animation: blink linear infinite 3s;
+}
+@keyframes blink {
+  78% {
+    color: inherit;
+    text-shadow: inherit;
+  }
+  79%{
+     color: #333;
+  }
+  80% {
+    
+    text-shadow: none;
+  }
+  81% {
+    color: inherit;
+    text-shadow: inherit;
+  }
+  82% {
+    color: #333;
+    text-shadow: none;
+  }
+  83% {
+    color: inherit;
+    text-shadow: inherit;
+  }
+  92% {
+    color: #333;
+    text-shadow: none;
+  }
+  92.5% {
+    color: inherit;
+    text-shadow: inherit;
+  }
+}
+
+
+/* follow me @nodws */
+#btn-twtr{
+  clear:both;
+  color:#fff;
+  border:2px solid;
+  border-radius:3px;
+  text-align:center;
+  text-decoration:none;
+  display:block;
+  font-family:sans-serif;
+  font-size:14px;
+  width:13em;
+  padding:5px 10px;
+  font-weight:600;
+  position:absolute;
+  bottom:20px;
+  left:0;
+  right:0;
+  margin:0 auto;
+  background:rgba(0,0,0,0.2);
+  box-shadow:0 0 0px 3px rgba(0,0,0,0.2);
+  opacity:0.4
+}#btn-twtr:hover{color:#fff;opacity:1}
     </style>
 </head>
 <body>
+    <header>
+        <div class="logo"><b>G<span>al</span>er<span>i</span>e</b></div>
+
+    </header>
     <div id="boutons1">
         <form action='' method='get' id="choixTable">
             <input type='submit' value='mes_photos' name='boutons'>
@@ -109,7 +202,7 @@
         session_start();
         $_SESSION['password'];
         if($_POST['pass']!=NULL){
-            array_push($_SESSION['password'],$_POST['pass']);
+            $_SESSION['password'][] = $_POST['pass'];
         }
         if($_GET['reset']== 'oui'){
             $_SESSION['password']=[];
@@ -204,7 +297,7 @@
             for($i=0;$i<count($rechercheMots);$i++){
                 $requete .="%".$rechercheMots[$i]."%' ";
                 if(isset($rechercheMots[$i+1])){
-                    $requete .= " OR liste_mots LIKE '";
+                    $requete .= " AND liste_mots LIKE '";
                 }
             }
             $jointure = 1;
@@ -224,7 +317,7 @@
             $resultatRq->execute();
             affiche_photo($resultatRq);
         }
-
+        
     ?>
     <form action="">
         <input type="submit" name="reset" value="oui">
