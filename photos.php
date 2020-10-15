@@ -16,13 +16,16 @@
             border: solid 1px black;
             background-color: white;
         }
+        table tr:first-child td{
+            background-color: grey;
+            color: white;
+        }
         td{
             border: solid 1px black;
         }
         #zonePhotos img{
             cursor: pointer;
-            margin: 5px;
-            border: 1px solid black
+            border-bottom: 1px solid black
         }
         #zonePhotos img:hover{
             opacity:0.5;
@@ -63,13 +66,30 @@
             margin-bottom:25px;
         }
         .currentImg{
-            max-width: 100%;
-            position: absolute;
+            width: 95%;
+            height: 100vh;
+            position: fixed;
             margin-left: auto;
             margin-right: auto;
-            top: 20px;
+            top: 1vh;
+            left: 2.5vw;
+            border: white 3px solid;
+            cursor: pointer;
+            overflow: scroll;
         }
-        
+        .imgCurrent{
+            width: 100%;
+        }
+        .cadreImg{
+            display:flex;
+            flex-flow: column wrap;
+            width: 23%;
+            justify-content: space-between;
+            text-align: center;
+            border: 1px solid black;
+            background-color: rgba(240, 248, 255, 0.475);
+            margin: 5px;
+        }
     </style>
 </head>
 <body>
@@ -156,7 +176,7 @@
                     }
                 }
                 if(in_array($result['passwd'],$_SESSION['password'])){
-                    echo '<img src="'.$result['chemin'].'/'.$result['nom_photo'].'" alt="La photo" width="23%" height="auto">';
+                    echo '<div class="cadreImg"><img src="'.$result['chemin'].'/'.$result['nom_photo'].'" alt="La photo" width="100%" height="auto"><p>'.$result['nom_photo'].' - '.$result['date'].'</p></div>';
                     $password='oui';
                 }
             }
@@ -210,13 +230,23 @@
         <input type="submit" name="reset" value="oui">
     </form>
     <script>
+        var zoomImg = 0;
         document.addEventListener('click', function(e){
             if(e.target.nodeName =='IMG'){
-                var curImg = document.createElement('img');
-                var curImgSrc = e.target.getAttribute('src');
-                curImg.setAttribute('src',curImgSrc);
-                curImg.setAttribute('class','currentImg');
-                document.body.appendChild(curImg);
+                if(zoomImg==0){
+                    var curImg = document.createElement('img');
+                    var contImg = document.createElement('div');
+                    contImg.setAttribute('class','currentImg');
+                    curImg.setAttribute('class','imgCurrent');
+                    var curImgSrc = e.target.getAttribute('src');
+                    curImg.setAttribute('src',curImgSrc);
+                    contImg.appendChild(curImg)
+                    document.body.appendChild(contImg);
+                    zoomImg=1;
+                } else {
+                    e.target.parentNode.remove();
+                    zoomImg = 0;
+                }
             }
         })
 
